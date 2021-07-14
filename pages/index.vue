@@ -6,7 +6,7 @@
     <v-container>
         <v-row justify="center">
             <v-col>
-                <v-card elevation="5" class="rounded-lg" style="margin-top: -150px; padding: 40px;">
+                <v-card elevation="7" class="rounded-lg" style="margin-top: -150px; padding: 40px;">
                   <v-container>
                       <v-row>
 
@@ -29,21 +29,27 @@
                         </v-col>
                         <v-icon>mdi-calendar-range</v-icon>
 
-                         <v-col cols="12" md="2">
-                            <v-btn
-                              class="ml-10 white--text"
-                              color="teal"
-                              fab
-                              @click="dialog = !dialog"
-                            >
-                              <v-icon>mdi-plus-box-multiple</v-icon>
-                            </v-btn>
+                        <v-col cols="12" md="2">
+                            <v-tooltip v-model="show" bottom>
+                                <!-- eslint-disable-next-line -->
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    class="ml-10 white--text"
+                                    color="teal"
+                                    fab
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="$router.push('/honorario')"
+                                  >
+                                    <v-icon>mdi-plus-box-multiple</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Cadastrar Honorários</span>
+                            </v-tooltip>
                         </v-col>
 
                         <v-col cols="12" md="1">
-                            <v-btn
-                              fab
-                            >
+                            <v-btn fab>
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                         </v-col>
@@ -55,21 +61,19 @@
                           :page.sync="page"
                           :items-per-page="itemsPerPage"
                           hide-default-footer
-                          class="elevation-3"
+                          class="elevation-3 black--text"
                           @page-count="pageCount = $event"
                         >
                         <!-- eslint-disable-next-line -->
                           <template v-slot:top>
-                            <v-toolbar
-                              flat
-                            >
+                            <v-toolbar flat>
                               <v-dialog
                                 v-model="dialog"
                                 max-width="500px"
                               >
                                 <v-card>
                                   <v-card-title>
-                                    <span class="text-h5">{{ formTitle }}</span>
+                                    <span class="text-h6">DADOS DO CONTRATO</span>
                                   </v-card-title>
 
                                   <v-card-text>
@@ -132,29 +136,21 @@
                                   <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn
-                                      color="blue darken-1"
-                                      text
+                                      color="blue darken-1 white--text"
                                       @click="close"
                                     >
-                                      Cancel
-                                    </v-btn>
-                                    <v-btn
-                                      color="blue darken-1"
-                                      text
-                                      @click="save"
-                                    >
-                                      Save
+                                      OK
                                     </v-btn>
                                   </v-card-actions>
                                 </v-card>
                               </v-dialog>
-                              <v-dialog v-model="dialogDelete" max-width="500px">
+                              <v-dialog v-model="dialogDelete" max-width="600px">
                                 <v-card>
-                                  <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                                  <v-card-title class="text-h5">Tem certeza de que deseja excluir este Honorário?</v-card-title>
                                   <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-                                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
+                                    <v-btn color="red darken-1" text @click="closeDelete">Cancelar</v-btn>
+                                    <v-btn color="blue darken-1" text @click="deleteItemConfirm">Deletar</v-btn>
                                     <v-spacer></v-spacer>
                                   </v-card-actions>
                                 </v-card>
@@ -163,24 +159,25 @@
                           </template>
                           <!-- eslint-disable-next-line -->
                           <template v-slot:item.actions="{ item }">
+
                             <v-icon
                               medium
                               class="mr-3 blue--text"
-                              @click="editItem(item)"
+                              @click="viewItem(item)"
                             >
                               mdi-clipboard-text
                             </v-icon>
                             <v-icon
                               medium
                               class="mr-3 teal--text"
-                              @click="editItem(item)"
+                              @click="$router.push('/honorario/id')"
                             >
-                              mdi-plus-box-multiple
+                              mdi-eye
                             </v-icon>
                             <v-icon
                               medium
                               class="mr-3 blue--text"
-                              @click="editItem(item)"
+                              @click="$router.push('/honorario')"
                             >
                               mdi-pencil
                             </v-icon>
@@ -200,8 +197,8 @@
                             :length="pageCount"
                           ></v-pagination>
 
-                            <p class="text-right">
-                              Total de Empresas - ({{ desserts.length }})
+                            <p class="text-right indigo--text">
+                              Total de Honorários - ({{ desserts.length }})
                             </p>
 
                           <v-text-field
@@ -231,6 +228,7 @@ export default{
   data: () => ({
       dialog: false,
       dialogDelete: false,
+      show: false,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
@@ -361,6 +359,12 @@ export default{
       },
 
       editItem (item) {
+        this.editedIndex = this.desserts.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
+
+      viewItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
