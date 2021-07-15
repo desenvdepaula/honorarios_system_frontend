@@ -24,22 +24,38 @@
                             </v-col>
                         </v-row>
 
+                        <v-row>
+                          <v-col>
+                            <h2 class="dark-text">HONORÁRIOS</h2>
+                          </v-col>
+                          <v-col>
+                            <v-text-field
+                              :value="itemsPerPage"
+                              label="ITENS POR PÁGINAS"
+                              type="number"
+                              min="-1"
+                              max="30"                           
+                              @input="itemsPerPage = parseInt($event, 10)">
+                                <template v-slot:append-outer>
+                                  <v-btn color="primary" elevation="2"> RELATÓRIO <v-icon>mdi-file-pdf</v-icon> </v-btn>
+                                </template>
+                            </v-text-field>
+                          </v-col>                         
+                        </v-row>
+
                         <v-data-table
                           :headers="headers"
                           :items="desserts"
                           :page.sync="page"
                           :items-per-page="itemsPerPage"
                           hide-default-footer
-                          class="table elevation-3"
-                          @page-count="pageCount = $event"
-                        >
-                        <!-- eslint-disable-next-line -->
-                          <template v-slot:top>
-                            <v-toolbar flat>
-                              <v-dialog
+                          class="table elevation-1 "
+                          @page-count="pageCount = $event">
+                            <!-- eslint-disable-next-line -->
+                            <template v-slot:top>
+                            <v-dialog
                                 v-model="dialog"
-                                max-width="500px"
-                              >
+                                max-width="500px">
                                 <v-card>
                                   <v-card-title>
                                     <span class="text-h6">DADOS DO CONTRATO</span>
@@ -124,61 +140,38 @@
                                   </v-card-actions>
                                 </v-card>
                               </v-dialog>
-                            </v-toolbar>
-                          </template>
-                          <!-- eslint-disable-next-line -->
-                          <template v-slot:item.actions="{ item }">
+                            </template>
+                          
+                            <!-- eslint-disable-next-line -->
+                            <template v-slot:item.actions="{ item }">
 
                             <v-icon
                               medium
                               class="mr-3 blue--text"
-                              @click="viewItem(item)"
-                            >
-                              mdi-pencil
-                            </v-icon>
-                            <v-icon
-                              medium
-                              class="mr-3 blue--text"
-                              @click="$router.push('/')"
-                            >
+                              @click="viewItem(item)">
                               mdi-pencil
                             </v-icon>
                             <v-icon
                               medium
                               class="red--text"
-                              @click="deleteItem(item)"
-                            >
-                              mdi-delete
+                              @click="deleteItem(item)">
+                              mdi-trash-can
                             </v-icon>
-                          </template>
+                            </template>
                         </v-data-table>
 
                         <div class="text-center pt-2">
-                          <v-pagination
-                            v-model="page"
-                            :length="pageCount"
-                          ></v-pagination>
+                          <v-pagination v-model="page" :length="pageCount"> </v-pagination>
 
-                            <p class="text-right indigo--text">
+                            <!-- <p class="text-right indigo--text">
                               Total de Honorários - ({{ desserts.length }})
-                            </p>
-
-                          <v-text-field
-                            :value="itemsPerPage"
-                            label="ITENS POR PÁGINAS"
-                            type="number"
-                            min="-1"
-                            max="15"
-                            @input="itemsPerPage = parseInt($event, 10)"
-                          ></v-text-field>
+                            </p> -->
                         </div>
                   </v-container>
                 </v-card>
             </v-col>
         </v-row>
     </v-container>
-
-
   </div>
 </template>
 
@@ -195,7 +188,7 @@ export default{
       pageCount: 0,
       itemsPerPage: 10,
       headers: [
-        { text: 'DATA', align: 'center', sortable: false, value: 'name', class: 'dark-text text-md-h5' },
+        { text: 'DATA', align: 'center', sortable: false, value: 'data', class: 'dark-text text-md-h5' },
         { text: 'LIMITE FUNCIONÁRIOS', align: 'center', value: 'calories', class: 'dark-text text-md-h6'},
         { text: 'VALOR', align: 'center', value: 'fat', class: 'dark-text text-md-h6'},
         { text: 'REGRA', align: 'center', value: 'carbs', class: 'dark-text text-md-h6'},
