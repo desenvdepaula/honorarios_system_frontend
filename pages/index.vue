@@ -207,7 +207,7 @@
                             <v-icon
                               medium
                               class="mr-4 teal--text"
-                              @click="$router.push('/honorario/id')"
+                              @click="$router.push('/honorario/' + item.id)"
                             >
                               mdi-eye
                             </v-icon>
