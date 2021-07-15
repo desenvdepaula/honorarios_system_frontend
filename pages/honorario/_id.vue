@@ -14,13 +14,13 @@
                                 <h3 class="text-center dark-text">EMPRESA X</h3>
                                 <p><strong  class="dark-text">NOME:</strong>  <span class="light-text">EMPRESA</span></p>
                                 <p><strong  class="dark-text">N°:</strong>  <span class="light-text">0001</span></p>
-                                <p><strong  class="dark-text">OUTROS DADOS:</strong>  <span class="light-text">...</span></p>                          
+                                <p><strong  class="dark-text">OUTROS DADOS:</strong>  <span class="light-text">...</span></p>
                             </v-col>
                             <v-col>
                                 <h3 class="text-center dark-text">CONTRATO</h3>
                                 <p><strong  class="dark-text">NOME:</strong>  <span class="light-text">EMPRESA</span></p>
                                 <p><strong  class="dark-text">N°:</strong>  <span class="light-text">0001</span></p>
-                                <p><strong  class="dark-text">OUTROS DADOS:</strong>  <span class="light-text">...</span></p>  
+                                <p><strong  class="dark-text">OUTROS DADOS:</strong>  <span class="light-text">...</span></p>
                             </v-col>
                         </v-row>
 
@@ -133,6 +133,13 @@
                               medium
                               class="mr-3 blue--text"
                               @click="viewItem(item)"
+                            >
+                              mdi-pencil
+                            </v-icon>
+                            <v-icon
+                              medium
+                              class="mr-3 blue--text"
+                              @click="$router.push('/')"
                             >
                               mdi-pencil
                             </v-icon>
@@ -380,9 +387,9 @@ export default{
         padding: 10px;
     }
 
-    .table thead tr:first-child{ background-color: #F8F9FA;}  
-    .table tr{ background-color: #CED4DA; } 
-    .table tr:nth-child(even){ background-color: #F8F9FA; } 
+    .table thead tr:first-child{ background-color: #F8F9FA;}
+    .table tr{ background-color: #CED4DA; }
+    .table tr:nth-child(even){ background-color: #F8F9FA; }
     .table tr td{ font-size: 22px; font-weight: bold; color: #717070; }
 
     .custom-text{ font-size: 22px; font-weight: bold;}

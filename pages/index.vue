@@ -240,7 +240,6 @@
 <script>
 export default{
   name: 'Home',
-  layout: 'init',
   asyncData(context){
     return context.app.$axios.$get('/empresa/')
       .then(data => {
@@ -263,7 +262,7 @@ export default{
           text: 'Empresa',
           align: 'start',
           sortable: false,
-          value: 'empresa',
+          value: 'empresa_honorario.nome',
           class: 'color black--text text-md-h5'
         },
         { text: 'Escritório', value: 'escritorio', class: 'color black--text text-md-h6'},
@@ -329,7 +328,6 @@ export default{
           honorario: this.editedItem,
           index: this.editedIndex
         }).then(() => {
-            // eslint-disable-next-line no-console
             console.log('Removido com sucesso')
             this.closeDelete()
           });
@@ -350,14 +348,6 @@ export default{
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         })
-      },
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.honorarios[this.editedIndex], this.editedItem)
-        } else {
-          this.honorarios.unshift(this.editedItem)
-        }
-        this.close()
       },
     },
 }

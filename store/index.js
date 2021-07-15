@@ -13,6 +13,9 @@ const createStore = () => {
       addHonorario(state, honorario){
         state.loadedHonorarios.unshift(honorario)
       },
+      removeHonorario(state, index){
+        state.loadedHonorarios.splice(index, 1)
+      },
       setEmpresas(state, empresas){
         state.loadedEmpresas = empresas
       },
@@ -40,12 +43,7 @@ const createStore = () => {
       removeHonorario(vuexContext, payload){
         return this.$axios.$delete('/honorario/' + payload.honorario.id)
           .then(() => {
-              const loaded = vuexContext.state.loadedHonorarios
-              loaded.splice(payload.index, 1)
-              vuexContext.commit('setHonorarios', loaded)
-              // eslint-disable-next-line no-console
-              console.log(loaded)
-              // eslint-disable-next-line no-console
+              vuexContext.commit('removeHonorario', payload.index)
               console.log('Removido com sucesso no Vuex')
             })
       },
