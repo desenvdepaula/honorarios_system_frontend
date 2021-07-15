@@ -39,7 +39,7 @@
                                     fab
                                     v-bind="attrs"
                                     v-on="on"
-                                    @click="$router.push('/honorario')"
+                                    @click="openDialogHonorario"
                                   >
                                     <v-icon>mdi-plus-box-multiple</v-icon>
                                   </v-btn>
@@ -57,7 +57,7 @@
                       </v-row>
                       <v-data-table
                           :headers="headers"
-                          :items="desserts"
+                          :items="honorarios"
                           :page.sync="page"
                           :items-per-page="itemsPerPage"
                           hide-default-footer
@@ -67,6 +67,62 @@
                         <!-- eslint-disable-next-line -->
                           <template v-slot:top>
                             <v-toolbar flat>
+                              <v-dialog
+                                v-model="dialogNewHonorario"
+                                max-width="500px"
+                              >
+                                <v-card>
+                                  <v-card-title>
+                                    <span class="text-h5">Cadastro de Novo Honorário</span>
+                                  </v-card-title>
+
+                                  <v-card-text>
+                                    <v-container>
+                                      <v-row>
+
+                                        <v-col cols="12">
+                                          <v-select
+                                            v-model="newHonorario.empresa"
+                                            label="EMPRESA"
+                                            :items="loadedEmpresas"
+                                            item-text="nome"
+                                            item-value="id"
+                                            required
+                                            clearable
+                                          ></v-select>
+                                        </v-col>
+
+                                        <v-col cols="12">
+                                          <v-text-field
+                                            v-model="newHonorario.escritorio"
+                                            label="NÚMERO DO ESCRITÓRIO"
+                                            type="number"
+                                          ></v-text-field>
+                                        </v-col>
+
+                                      </v-row>
+                                    </v-container>
+                                  </v-card-text>
+
+                                  <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                      color="red lighten-1 white--text"
+                                      @click="close"
+                                    >
+                                      cancelar
+                                    </v-btn>
+                                    <v-btn
+                                      color="#5C7CFA"
+                                      class="white--text"
+                                      @click="addHonorario"
+                                    >
+                                      Cadastrar Honorário
+                                    </v-btn>
+                                  </v-card-actions>
+                                </v-card>
+                              </v-dialog>
+
                               <v-dialog
                                 v-model="dialog"
                                 max-width="500px"
@@ -79,56 +135,23 @@
                                   <v-card-text>
                                     <v-container>
                                       <v-row>
-                                        <v-col
-                                          cols="12"
-                                          sm="6"
-                                          md="4"
-                                        >
-                                          <v-text-field
-                                            v-model="editedItem.name"
-                                            label="Dessert name"
-                                          ></v-text-field>
+
+                                        <v-col cols="12" sm="6" md="4">
+                                          <p>Empresa: {{ editedItem.empresa }}</p>
                                         </v-col>
-                                        <v-col
-                                          cols="12"
-                                          sm="6"
-                                          md="4"
-                                        >
-                                          <v-text-field
-                                            v-model="editedItem.calories"
-                                            label="Calories"
-                                          ></v-text-field>
+                                        <v-col cols="12" sm="6" md="4">
+                                          <p>Empresa: {{ editedItem.empresa }}</p>
                                         </v-col>
-                                        <v-col
-                                          cols="12"
-                                          sm="6"
-                                          md="4"
-                                        >
-                                          <v-text-field
-                                            v-model="editedItem.fat"
-                                            label="Fat (g)"
-                                          ></v-text-field>
+                                        <v-col cols="12" sm="6" md="4">
+                                          <p>Empresa: {{ editedItem.empresa }}</p>
                                         </v-col>
-                                        <v-col
-                                          cols="12"
-                                          sm="6"
-                                          md="4"
-                                        >
-                                          <v-text-field
-                                            v-model="editedItem.carbs"
-                                            label="Carbs (g)"
-                                          ></v-text-field>
+                                        <v-col cols="12" sm="6" md="4">
+                                          <p>Empresa: {{ editedItem.empresa }}</p>
                                         </v-col>
-                                        <v-col
-                                          cols="12"
-                                          sm="6"
-                                          md="4"
-                                        >
-                                          <v-text-field
-                                            v-model="editedItem.protein"
-                                            label="Protein (g)"
-                                          ></v-text-field>
+                                        <v-col cols="12" sm="6" md="4">
+                                          <p>Empresa: {{ editedItem.empresa }}</p>
                                         </v-col>
+
                                       </v-row>
                                     </v-container>
                                   </v-card-text>
@@ -144,6 +167,7 @@
                                   </v-card-actions>
                                 </v-card>
                               </v-dialog>
+
                               <v-dialog v-model="dialogDelete" max-width="600px">
                                 <v-card>
                                   <v-card-title class="text-h5">Tem certeza de que deseja excluir este Honorário?</v-card-title>
@@ -176,13 +200,6 @@
                             </v-icon>
                             <v-icon
                               medium
-                              class="mr-3 blue--text"
-                              @click="$router.push('/honorario')"
-                            >
-                              mdi-pencil
-                            </v-icon>
-                            <v-icon
-                              medium
                               class="red--text"
                               @click="deleteItem(item)"
                             >
@@ -198,7 +215,7 @@
                           ></v-pagination>
 
                             <p class="text-right indigo--text">
-                              Total de Honorários - ({{ desserts.length }})
+                              Total de Honorários - ({{ honorarios.length }})
                             </p>
 
                           <v-text-field
@@ -224,9 +241,19 @@
 export default{
   name: 'Home',
   layout: 'init',
+  asyncData(context){
+    return context.app.$axios.$get('/empresa/')
+      .then(data => {
+        return {
+          loadedEmpresas: data
+        }
+      })
+      .catch(e => context.error(e));
+  },
   data: () => ({
       dialog: false,
       dialogDelete: false,
+      dialogNewHonorario: false,
       show: false,
       page: 1,
       pageCount: 0,
@@ -236,34 +263,28 @@ export default{
           text: 'Empresa',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'empresa',
           class: 'color black--text text-md-h5'
         },
-        { text: 'Escritório', value: 'calories', class: 'color black--text text-md-h6'},
-        { text: 'Data', value: 'fat', class: 'color black--text text-md-h6'},
-        { text: 'Regra', value: 'carbs', class: 'color black--text text-md-h6'},
+        { text: 'Escritório', value: 'escritorio', class: 'color black--text text-md-h6'},
         { text: 'Ações', value: 'actions', sortable: false, class: 'color black--text text-md-h6'},
       ],
-      desserts: [],
+      honorarios: [],
       editedIndex: -1,
+      lastContrato: {},
+      newHonorario: {},
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        empresa: '',
+        escritorio: 0,
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        empresa: '',
+        escritorio: 0,
       },
     }),
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      loadedHonorarios(){
+        return this.$store.getters.loadedHonorarios
       },
     },
     watch: {
@@ -278,104 +299,49 @@ export default{
       this.initialize()
     },
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          },
-        ]
+      initialize(){
+        this.honorarios = this.loadedHonorarios
       },
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+      openDialogHonorario() {
+        this.dialogNewHonorario = true
+      },
+
+      addHonorario() {
+        this.$store.dispatch('addHonorario', this.newHonorario).then(() => {
+          this.close()
+        });
+
       },
       viewItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.honorarios.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
+        const contratos = this.editedItem.contratos
+        this.lastContrato = contratos[contratos.length - 1]
       },
       deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.honorarios.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
       deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
+        this.$store.dispatch('removeHonorario', {
+          honorario: this.editedItem,
+          index: this.editedIndex
+        }).then(() => {
+            // eslint-disable-next-line no-console
+            console.log('Removido com sucesso')
+            this.closeDelete()
+          });
       },
       close () {
         this.dialog = false
+        this.dialogNewHonorario = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
+          this.newHonorario = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
+          this.lastContrato = {}
         })
       },
       closeDelete () {
@@ -387,9 +353,9 @@ export default{
       },
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          Object.assign(this.honorarios[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.unshift(this.editedItem)
+          this.honorarios.unshift(this.editedItem)
         }
         this.close()
       },
