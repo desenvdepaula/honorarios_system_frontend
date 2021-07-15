@@ -1,20 +1,10 @@
 <template>
-  <div>
-    <!-- <p>batata</p> -->
-    <Nuxt />
-  </div>
-  
+  <v-app>
+    <v-main>
+      <Nuxt />
+    </v-main>
+  </v-app>
 </template>
-
-<script>
-export default {
-  data () {
-    return {
-      
-    }
-  }
-}
-</script>
 
 <style>
   html{ font-family: 'Open Sans', sans-serif;}

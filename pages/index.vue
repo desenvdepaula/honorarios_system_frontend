@@ -221,7 +221,6 @@
 </template>
 
 <script>
-
 export default{
   name: 'Home',
   layout: 'init',
@@ -262,13 +261,11 @@ export default{
         protein: 0,
       },
     }),
-
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
     },
-
     watch: {
       dialog (val) {
         val || this.close()
@@ -277,11 +274,9 @@ export default{
         val || this.closeDelete()
       },
     },
-
     created () {
       this.initialize()
     },
-
     methods: {
       initialize () {
         this.desserts = [
@@ -357,30 +352,25 @@ export default{
           },
         ]
       },
-
       editItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
-
       viewItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
-
       deleteItem (item) {
         this.editedIndex = this.desserts.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
-
       deleteItemConfirm () {
         this.desserts.splice(this.editedIndex, 1)
         this.closeDelete()
       },
-
       close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -388,7 +378,6 @@ export default{
           this.editedIndex = -1
         })
       },
-
       closeDelete () {
         this.dialogDelete = false
         this.$nextTick(() => {
@@ -396,7 +385,6 @@ export default{
           this.editedIndex = -1
         })
       },
-
       save () {
         if (this.editedIndex > -1) {
           Object.assign(this.desserts[this.editedIndex], this.editedItem)
@@ -410,7 +398,6 @@ export default{
 </script>
 
 <style scoped>
-
   .intro {
     height: 925px;
     position: relative;
@@ -421,7 +408,6 @@ export default{
     background-size: cover;
     background-attachment: fixed;
   }
-
   .intro h1 {
     text-align: center;
     font-family: 'Yellowtail', cursive;
@@ -430,5 +416,4 @@ export default{
     color: rgba(253, 253, 253, 0.63);
     padding: 10px;
   }
-
 </style>
