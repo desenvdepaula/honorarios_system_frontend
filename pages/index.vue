@@ -10,31 +10,20 @@
                   <v-container>
                       <v-row>
 
-                        <v-col cols="12" md="3">
+                        <v-col cols="12" md="10">
                           <v-text-field
-                            label="EMPRESA:"
+                            v-model="search"
+                            append-icon="mdi-magnify"
+                            label="PESQUISAR POR EMPRESA OU ESCRITÓRIO"
                           ></v-text-field>
                         </v-col>
-
-                        <v-col cols="12" md="3">
-                          <v-text-field
-                            label="ESCRITÓRIO:"
-                          ></v-text-field>
-                        </v-col>
-
-                        <v-col cols="12" md="2">
-                          <v-text-field
-                            label="DATA DE CADASTRO:"
-                          ></v-text-field>
-                        </v-col>
-                        <v-icon>mdi-calendar-range</v-icon>
 
                         <v-col cols="12" md="2">
                             <v-tooltip v-model="show" bottom>
                                 <!-- eslint-disable-next-line -->
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-btn
-                                    class="ml-10 white--text"
+                                    class="ml-16 white--text"
                                     color="teal"
                                     fab
                                     v-bind="attrs"
@@ -48,12 +37,6 @@
                             </v-tooltip>
                         </v-col>
 
-                        <v-col cols="12" md="1">
-                            <v-btn fab>
-                              <v-icon>mdi-magnify</v-icon>
-                            </v-btn>
-                        </v-col>
-
                       </v-row>
                       <v-data-table
                           :headers="headers"
@@ -62,6 +45,7 @@
                           :items-per-page="itemsPerPage"
                           hide-default-footer
                           class="elevation-3 black--text"
+                          :search="search"
                           @page-count="pageCount = $event"
                         >
                         <!-- eslint-disable-next-line -->
@@ -125,31 +109,51 @@
 
                               <v-dialog
                                 v-model="dialog"
-                                max-width="500px"
+                                max-width="900px"
                               >
                                 <v-card>
                                   <v-card-title>
-                                    <span class="text-h6">DADOS DO CONTRATO</span>
+                                    <span class="text-h5 black--text">DADOS DO CONTRATO</span>
                                   </v-card-title>
+                                  <v-divider inset></v-divider>
+                                  <v-spacer></v-spacer>
 
                                   <v-card-text>
                                     <v-container>
                                       <v-row>
 
-                                        <v-col cols="12" sm="6" md="4">
-                                          <p>Empresa: {{ editedItem.empresa }}</p>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Empresa:</strong>  {{ full.nome }}</p>
                                         </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                          <p>Empresa: {{ editedItem.empresa }}</p>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Escritório:</strong>  {{ editedItem.escritorio }}</p>
                                         </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                          <p>Empresa: {{ editedItem.empresa }}</p>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">REGRA:</strong>  {{ full.regra }}</p>
                                         </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                          <p>Empresa: {{ editedItem.empresa }}</p>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Documento:</strong>  {{ lastContrato.documento }}</p>
                                         </v-col>
-                                        <v-col cols="12" sm="6" md="4">
-                                          <p>Empresa: {{ editedItem.empresa }}</p>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Contrato:</strong>  {{ lastContrato.dt_contrato }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Vigência:</strong>  {{ lastContrato.dt_vigencia }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Valor do Honorário:</strong>  {{ lastContrato.vl_honorario }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Número de Funcionários:</strong>  {{ lastContrato.nr_funcionarios }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Valor por Funcionário:</strong>  {{ lastContrato.vl_por_funcionario }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Valor por Funcionário Secundário:</strong>  {{ lastContrato.vl_por_funcionario_secundario }}</p>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="6">
+                                          <p class="text-h6"><strong class="text-h6 black--text">Índice de Reajuste:</strong>  {{ lastContrato.indice_reajuste }}</p>
                                         </v-col>
 
                                       </v-row>
@@ -185,15 +189,24 @@
                           <template v-slot:item.actions="{ item }">
 
                             <v-icon
+                              v-if="item.contratos.length == 0"
                               medium
-                              class="mr-3 blue--text"
+                              color="#DDD"
+                              class="mr-4"
+                            >
+                              mdi-clipboard-text
+                            </v-icon>
+                            <v-icon
+                              v-else
+                              medium
+                              class="mr-4 blue--text"
                               @click="viewItem(item)"
                             >
                               mdi-clipboard-text
                             </v-icon>
                             <v-icon
                               medium
-                              class="mr-3 teal--text"
+                              class="mr-4 teal--text"
                               @click="$router.push('/honorario/id')"
                             >
                               mdi-eye
@@ -250,6 +263,7 @@ export default{
       .catch(e => context.error(e));
   },
   data: () => ({
+      search: '',
       dialog: false,
       dialogDelete: false,
       dialogNewHonorario: false,
@@ -271,15 +285,18 @@ export default{
       honorarios: [],
       editedIndex: -1,
       lastContrato: {},
-      newHonorario: {},
+      newHonorario: {
+        escritorio: null,
+      },
       editedItem: {
         empresa: '',
-        escritorio: 0,
+        escritorio: null,
       },
       defaultItem: {
         empresa: '',
-        escritorio: 0,
+        escritorio: null,
       },
+      full: {},
     }),
     computed: {
       loadedHonorarios(){
@@ -299,7 +316,7 @@ export default{
     },
     methods: {
       initialize(){
-        this.honorarios = this.loadedHonorarios
+        this.honorarios = this.loadedHonorarios;
       },
       openDialogHonorario() {
         this.dialogNewHonorario = true
@@ -309,15 +326,18 @@ export default{
         this.$store.dispatch('addHonorario', this.newHonorario).then(() => {
           this.close()
         });
-
       },
+
       viewItem (item) {
         this.editedIndex = this.honorarios.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        this.dialog = true
         const contratos = this.editedItem.contratos
         this.lastContrato = contratos[contratos.length - 1]
+        this.full.regra = this.lastContrato.regra_contrato.regra
+        this.full.nome = this.editedItem.empresa_honorario.nome
+        this.dialog = true
       },
+
       deleteItem (item) {
         this.editedIndex = this.honorarios.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -340,6 +360,7 @@ export default{
           this.newHonorario = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
           this.lastContrato = {}
+          this.full = {}
         })
       },
       closeDelete () {

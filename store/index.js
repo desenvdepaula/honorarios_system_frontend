@@ -26,6 +26,7 @@ const createStore = () => {
       nuxtServerInit(vuexContext, context){
         return context.app.$axios.$get('/honorario/')
           .then(data => {
+            data.reverse();
             vuexContext.commit('setHonorarios', data)
           })
           .catch(e => context.error(e));
