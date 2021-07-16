@@ -4,7 +4,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s - honorarios',
-    title: 'honorarios',
+    title: 'Honorarios',
     htmlAttrs: {
       lang: 'en'
     },
@@ -23,12 +23,19 @@ export default {
     ]
   },
 
+  loading: { color: '#3B8070' },
+  loadingIndicator: {
+    name: 'circle',
+    color:'#fa923f'
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    './plugins/date-filter.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -46,12 +53,19 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/toast',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     baseURL: process.env.BASE_URL || 'http://192.168.160.50:8000/api/v1',
     credentials: false,
+  },
+
+  toast: {
+    position: 'top-center',
+    duration: 2000,
+    keepOnHover: true,
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

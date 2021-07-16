@@ -1,6 +1,5 @@
 export const state = () => ({
   loadedHonorarios: [],
-  loadedEmpresas: [],
 })
 
 export const mutations = {
@@ -12,9 +11,6 @@ export const mutations = {
   },
   removeHonorario(state, index){
     state.loadedHonorarios.splice(index, 1)
-  },
-  setEmpresas(state, empresas){
-    state.loadedEmpresas = empresas
   },
 }
 
@@ -45,15 +41,10 @@ export const actions = {
           this.$toast.success('Removido com Sucesso')
         }).catch(e => this.$toast.error(`Error ${e}`))
   },
-
 }
 
 export const getters = {
   loadedHonorarios(state){
     return state.loadedHonorarios
   },
-  loadedEmpresas(state){
-    return state.loadedEmpresas
-  },
-
-}
+};

@@ -135,10 +135,10 @@
                                           <p class="text-h6"><strong class="text-h6 black--text">Documento:</strong>  {{ lastContrato.documento }}</p>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Contrato:</strong>  {{ lastContrato.dt_contrato }}</p>
+                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Contrato:</strong>  {{ dt_contrato | date }}</p>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
-                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Vigência:</strong>  {{ lastContrato.dt_vigencia }}</p>
+                                          <p class="text-h6"><strong class="text-h6 black--text">Data de Vigência:</strong>  {{ dt_vigencia | date }}</p>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="6">
                                           <p class="text-h6"><strong class="text-h6 black--text">Valor do Honorário:</strong>  {{ lastContrato.vl_honorario }}</p>
@@ -295,6 +295,8 @@ export default{
         escritorio: null,
       },
       full: {},
+      dt_vigencia: '',
+      dt_contrato: '',
     }),
     computed: {
       loadedHonorarios(){
@@ -331,6 +333,8 @@ export default{
         this.editedItem = Object.assign({}, item)
         const contratos = this.editedItem.contratos
         this.lastContrato = contratos[contratos.length - 1]
+        this.dt_contrato = this.lastContrato.dt_contrato
+        this.dt_vigencia = this.lastContrato.dt_vigencia
         this.full.regra = this.lastContrato.regra_contrato.regra
         this.full.nome = this.editedItem.empresa_honorario.nome
         this.dialog = true
@@ -346,7 +350,6 @@ export default{
           honorario: this.editedItem,
           index: this.editedIndex
         }).then(() => {
-            console.log('Removido com sucesso')
             this.closeDelete()
           });
       },
