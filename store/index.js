@@ -10,6 +10,10 @@ export const mutations = {
   addHonorario(state, honorario){
     state.loadedHonorarios.unshift(honorario)
   },
+  editHonorario(state, editedHonorario){
+    const honorarioIndex = state.loadedHonorarios.findIndex(honorario => honorario.id === editedHonorario.id)
+    state.loadedHonorarios.splice(honorarioIndex, 1, editedHonorario)
+  },
   removeHonorario(state, index){
     state.loadedHonorarios.splice(index, 1)
   },
@@ -32,8 +36,16 @@ export const actions = {
     return this.$axios.$post('/honorario/', honorario)
       .then(data => {
           vuexContext.commit('addHonorario', data)
-          this.$toast.show('Cadastrando...')
           this.$toast.success('Cadastro Efetuado com Sucesso')
+        })
+      .catch(e => this.$toast.error(`Error ${e}`))
+  },
+
+  editHonorario(vuexContext, editedhonorario){
+    return this.$axios.$put('/honorario/' + editedhonorario.id + '/', editedhonorario.honorario)
+      .then(data => {
+          vuexContext.commit('editHonorario', data)
+          this.$toast.success('Editado com Sucesso')
         })
       .catch(e => this.$toast.error(`Error ${e}`))
   },

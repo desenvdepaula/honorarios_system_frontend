@@ -35,7 +35,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    './plugins/date-filter.js'
+    './plugins/date-filter.js',
+    './plugins/v-mask.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -58,7 +59,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: process.env.BASE_URL || 'http://192.168.160.50:8000/api/v1',
+    baseURL: process.env.BASE_URL || 'http://192.168.1.79:8000/api/v1',
     credentials: false,
   },
 

@@ -10,7 +10,7 @@
                   <v-container>
                       <v-row>
 
-                        <v-col cols="12" md="10">
+                        <v-col cols="12" md="9">
                           <v-text-field
                             v-model="search"
                             append-icon="mdi-magnify"
@@ -18,14 +18,34 @@
                           ></v-text-field>
                         </v-col>
 
-                        <v-col cols="12" md="2">
+                        <v-col cols="12" md="3">
+                           <v-speed-dial
+                            fab
+                            direction="right"
+                            open-on-hover
+                            class="ml-14 mb-2"
+                            transition="slide-y-reverse-transition"
+                          >
+                            <!-- eslint-disable-next-line -->
+                            <template v-slot:activator>
+                              <v-btn
+                                color="blue darken-2"
+                                dark
+                                fab
+                              >
+                                <v-icon>
+                                  mdi-plus
+                                </v-icon>
+                              </v-btn>
+                            </template>
                             <v-tooltip v-model="show" bottom>
                                 <!-- eslint-disable-next-line -->
                                 <template v-slot:activator="{ on, attrs }">
                                   <v-btn
-                                    class="ml-16 white--text"
-                                    color="teal"
                                     fab
+                                    class="white--text"
+                                    color="teal"
+                                    small
                                     v-bind="attrs"
                                     v-on="on"
                                     @click="openDialogHonorario"
@@ -35,6 +55,43 @@
                                 </template>
                                 <span>Cadastrar Honorários</span>
                             </v-tooltip>
+                            <v-tooltip v-model="show1" bottom>
+                                <!-- eslint-disable-next-line -->
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    fab
+                                    class="white--text"
+                                    color="indigo"
+                                    small
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="$router.push('/empresa/')"
+                                  >
+                                    <v-icon>mdi-office-building</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Empresas</span>
+                            </v-tooltip>
+                            <v-tooltip v-model="show2" bottom>
+                                <!-- eslint-disable-next-line -->
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    fab
+                                    class="white--text"
+                                    color="blue"
+                                    small
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    @click="$router.push('/regra/')"
+                                  >
+                                    <v-icon>mdi-book-check-outline</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Regras</span>
+                            </v-tooltip>
+                          </v-speed-dial>
+
+
                         </v-col>
 
                       </v-row>
@@ -57,7 +114,7 @@
                               >
                                 <v-card>
                                   <v-card-title>
-                                    <span class="text-h5">Cadastro de Novo Honorário</span>
+                                    <span class="text-h5">{{ formTitle }}</span>
                                   </v-card-title>
 
                                   <v-card-text>
@@ -101,7 +158,7 @@
                                       class="white--text"
                                       @click="addHonorario"
                                     >
-                                      Cadastrar Honorário
+                                      {{formTitle}}
                                     </v-btn>
                                   </v-card-actions>
                                 </v-card>
@@ -192,24 +249,31 @@
                               v-if="item.contratos.length == 0"
                               medium
                               color="#DDD"
-                              class="mr-4"
+                              class="mr-5"
                             >
                               mdi-clipboard-text
                             </v-icon>
                             <v-icon
                               v-else
                               medium
-                              class="mr-4 blue--text"
+                              class="mr-5 blue--text"
                               @click="viewItem(item)"
                             >
                               mdi-clipboard-text
                             </v-icon>
                             <v-icon
                               medium
-                              class="mr-4 teal--text"
+                              class="mr-5 teal--text"
                               @click="$router.push('/honorario/' + item.id)"
                             >
                               mdi-eye
+                            </v-icon>
+                            <v-icon
+                              medium
+                              class="mr-5 blue--text"
+                              @click="editItem(item)"
+                            >
+                              mdi-pencil
                             </v-icon>
                             <v-icon
                               medium
@@ -266,6 +330,8 @@ export default{
       dialogDelete: false,
       dialogNewHonorario: false,
       show: false,
+      show1: false,
+      show2: false,
       page: 1,
       pageCount: 0,
       itemsPerPage: 10,
@@ -273,7 +339,6 @@ export default{
         {
           text: 'Empresa',
           align: 'start',
-          sortable: false,
           value: 'empresa_honorario.nome',
           class: 'color black--text text-md-h5'
         },
@@ -284,6 +349,7 @@ export default{
       editedIndex: -1,
       lastContrato: {},
       newHonorario: {
+        empresa: '',
         escritorio: null,
       },
       editedItem: {
@@ -301,6 +367,9 @@ export default{
     computed: {
       loadedHonorarios(){
         return this.$store.getters.loadedHonorarios
+      },
+      formTitle () {
+        return this.editedIndex === -1 ? 'CADASTRAR HONORÁRIO' : 'EDITAR HONORÁRIO'
       },
     },
     watch: {
@@ -323,10 +392,20 @@ export default{
       },
 
       addHonorario() {
-        this.$store.dispatch('addHonorario', this.newHonorario).then(() => {
-          this.close()
-        });
+        if(this.editedIndex === -1){
+          this.$store.dispatch('addHonorario', this.newHonorario).then(() => {
+            this.close()
+          });
+        }else{
+          this.$store.dispatch('editHonorario', {
+            honorario: this.newHonorario,
+            id: this.editedItem.id,
+          }).then(() => {
+            this.close()
+          });
+        }
       },
+
 
       viewItem (item) {
         this.editedIndex = this.honorarios.indexOf(item)
@@ -338,6 +417,14 @@ export default{
         this.full.regra = this.lastContrato.regra_contrato.regra
         this.full.nome = this.editedItem.empresa_honorario.nome
         this.dialog = true
+      },
+
+      editItem (item) {
+        this.editedIndex = this.honorarios.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogNewHonorario = true
+        this.newHonorario.empresa = this.editedItem.empresa_honorario.id
+        this.newHonorario.escritorio = this.editedItem.escritorio
       },
 
       deleteItem (item) {
@@ -393,5 +480,13 @@ export default{
     margin-top: 20%;
     color: rgba(253, 253, 253, 0.63);
     padding: 10px;
+  }
+
+ .home-page .v-speed-dial {
+    position: absolute;
+  }
+
+  .home-page .v-btn--floating {
+    position: relative;
   }
 </style>
